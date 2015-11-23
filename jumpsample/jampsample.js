@@ -4,11 +4,11 @@ window.onload = function(){
     var game = new Core(320, 320);
     //game.fps = 15;
     game.preload({
-        "flog_stand": "stand.png",
-        "flog_hang": "hang.png",
-        "flog_jump": "jump.png",
-        "flog_hug": "hug.png",
-        "cloud": "cloud.png"
+        "flog_stand": "../img/stand.png",
+        "flog_hang": "../img/hang.png",
+        "flog_jump": "../img/jump.png",
+        "flog_hug": "../img/hug.png",
+        "cloud": "../img/cloud.png"
     });
     game.onload = function(){
         var flog = new Sprite(64, 64);

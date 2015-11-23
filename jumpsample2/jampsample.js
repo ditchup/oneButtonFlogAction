@@ -1,0 +1,76 @@
+enchant();
+
+window.onload = function(){
+    var game = new Core(320, 320);
+    //game.fps = 15;
+    game.preload({
+        "flog_stand": "../img/stand.png",
+        "flog_hang": "../img/hang.png",
+        "flog_jump": "../img/jump.png",
+        "flog_hug": "../img/hug.png",
+        "cloud": "../img/cloud.png"
+    });
+    game.onload = function(){
+        var flog = new Sprite(64, 64);
+        var images = game.assets;
+
+        var hight = [0, 20, 30, 36, 40, 42, 43, 44, 43, 42, 40, 36, 30, 20, 0];
+        var basehight = 200;
+
+        flog.y = basehight;
+        flog.state = 0; /*0: stand,  1: jumping, 2: hug*/
+        flog.time = 0;
+
+        flog.stand = function() {
+            flog.time = 0;
+            flog.state = 0;
+            flog.image = images["flog_stand"];
+            flog.clearEventListener("enterframe");
+        };
+        flog.stand();
+
+        flog.jump = function() {
+            //if (time) flog.time = time;
+
+            flog.state = 1;
+            flog.image = images["flog_jump"];
+
+            flog.addEventListener("enterframe", function (e) {
+                flog.y = basehight - hight[flog.time];
+                flog.time++;
+                if (flog.time === hight.length) {
+                    flog.stand();
+                }
+            });
+        }
+
+        flog.hug = function() {
+            flog.state = 2;
+            flog.image = images["flog_hug"];
+
+            flog.clearEventListener("enterframe");
+            flog.addEventListener("enterframe", function (e) {
+                flog.x += 2;
+                if (flog.x >= game.width) {
+                    flog.x = 0;
+                }
+            });
+        };
+        game.currentScene.addEventListener("touchstart", function (e) {
+            switch (flog.state) {
+                case 0: // stand
+                    flog.jump();
+                    break;
+                case 1: // jump
+                    flog.hug();
+                    break;
+                case 2: // hug
+                    flog.jump(); // 以前のjump時のtimeを再利用
+                    break;
+            }
+
+        });
+        game.currentScene.addChild(flog);
+    };
+    game.start();
+};
