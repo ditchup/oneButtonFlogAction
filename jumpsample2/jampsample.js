@@ -15,6 +15,7 @@ window.onload = function(){
         var images = game.assets;
 
         var hight = [0, 20, 30, 36, 40, 42, 43, 44, 43, 42, 40, 36, 30, 20, 0];
+        var hlen = hight.length;
         var basehight = 200;
 
         flog.y = basehight;
@@ -29,8 +30,8 @@ window.onload = function(){
         };
         flog.stand();
 
-        flog.jump = function() {
-            //if (time) flog.time = time;
+        flog.jump = function(time) {
+            //if (typeof time === "number") flog.time = time;
 
             flog.state = 1;
             flog.image = images["flog_jump"];
@@ -38,9 +39,32 @@ window.onload = function(){
             flog.addEventListener("enterframe", function (e) {
                 flog.y = basehight - hight[flog.time];
                 flog.time++;
-                if (flog.time === hight.length) {
+                if (flog.time === hlen) {
                     flog.stand();
                 }
+            });
+        }
+
+        flog.fall = function (time) {
+            flog.state = 1;
+            flog.image = images["flog_jump"];
+            flog.time = time;
+            var localbasehight = flog.y + hight[flog.time];
+            
+            flog.addEventListener("enterframe", function(e) {
+                if (flog.time < hlen) {
+                    flog.y = localbasehight - hight[flog.time];
+                    flog.time++;
+                } else {
+                    // 自由落下最高速
+                    flog.y += 34;
+                }
+
+                if (flog.y > basehight) {
+                    flog.y = basehight;
+                    flog.stand();
+                }
+
             });
         }
 
@@ -63,9 +87,12 @@ window.onload = function(){
                     break;
                 case 1: // jump
                     flog.hug();
+                    //console.log(flog.time);
                     break;
                 case 2: // hug
-                    flog.jump(); // 以前のjump時のtimeを再利用
+                    //flog.jump(); // 以前のjump時のtimeを再利用
+                    flog.fall(2);
+                    // 操作で落下か小ジャンプか選べないだろうか。
                     break;
             }
 
